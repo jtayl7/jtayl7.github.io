@@ -1,1 +1,51 @@
-Hello World
+<html>
+<script src='https://d3js.org/d3.v5.min.js'></script>
+<script src='https://d3js.org/d3-array.v2.min.js'></script>
+<style> circle {fill: lightblue; stroke: black;} </style>
+<body onload='init()'>
+<svg width = 1000 height = 1000>
+</svg>
+<script>
+async function init() {
+    const data = await d3.csv('https://jtayl7.github.io/Weekly_Deaths_AZ.csv')
+    
+    const margin = 60;
+    const width = 1000 - 2 * margin;
+    const height = 600 - 2 * margin;
+
+    const svg = d3.select('svg');
+
+    const chart = svg.append('g')
+    .attr('transform', `translate(${margin}, ${margin})`);
+
+    const yScale = d3.scaleLinear()
+    .range([height, 0])
+    .domain([0, 100]);
+
+    chart.append('g')
+    .call(d3.axisLeft(yScale));
+
+    const xScale = d3.scaleBand()
+    .range([0, width])
+    .domain(data.map((d) => d.mmwrweek))
+    .padding(0.2)
+
+chart.append('g')
+    .attr('transform', `translate(0, ${height})`)
+    .call(d3.axisBottom(xScale));
+
+chart.selectAll()
+    .data(data)
+    .enter()
+    .append('rect')
+    .attr('x', (s) => xScale(s.mmwrweek))
+    .attr('y', (s) => yScale(s.septicemia_a40_a41))
+    .attr('height', (s) => height - yScale(s.septicemia_a40_a41))
+    .attr('width', xScale.bandwidth())
+}
+
+
+
+</script>
+</body>
+</html>
