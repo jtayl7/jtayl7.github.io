@@ -59,32 +59,35 @@
           .attr("class", "barchart")
           .attr("x", (d) => xScale(d.mmwrweek))
           .attr("y", (d) => yScale(d[predictor]))
-          .attr("height", (d) => height - yScale(d[predictor]))
           .attr("width", xScale.bandwidth())
-          .on("mouseenter", function (d, i) {
-            d3.select(this).attr("fill", "blue");
+          .transition()
+          .duration(500)
+          .attr("height", (d) => height - yScale(d[predictor]));
 
-            chart
-              .append("line")
-              .attr("class", "divergence")
-              .attr("x1", 0)
-              .attr("y1", yScale(d[predictor]))
-              .attr("x2", width)
-              .attr("y2", yScale(d[predictor]))
-              .attr("stroke", "pink");
-          })
-          .on("mouseleave", function (d, i) {
-            d3.select(this).attr("fill", "black");
+        //   .on("mouseenter", function (d, i) {
+        //     d3.select(this).attr("fill", "orange");
 
-            d3.select(this)
-              .transition()
-              .duration(300)
-              .attr("opacity", 1)
-              .attr("x", (a) => xScale(a.mmwrweek))
-              .attr("width", xScale.bandwidth());
+        //     chart
+        //       .append("line")
+        //       .attr("class", "divergence")
+        //       .attr("x1", 0)
+        //       .attr("y1", yScale(d[predictor]))
+        //       .attr("x2", width)
+        //       .attr("y2", yScale(d[predictor]))
+        //       .attr("stroke", "pink");
+        //   })
+        //   .on("mouseleave", function (d, i) {
+        //     d3.select(this).attr("fill", "black");
 
-            chart.selectAll(".divergence").remove();
-          });
+        //     d3.select(this)
+        //       .transition()
+        //       .duration(300)
+        //       .attr("opacity", 1)
+        //       .attr("x", (a) => xScale(a.mmwrweek))
+        //       .attr("width", xScale.bandwidth());
+
+        //     chart.selectAll(".divergence").remove();
+        //   });
 
         svg
           .append("text")
@@ -111,7 +114,8 @@
 
       async function init() {
         const data = await d3.csv(
-          "https://jtayl7.github.io/Weekly_Deaths_AZ.csv"
+          //"https://jtayl7.github.io/Weekly_Deaths_AZ.csv"
+          "https://raw.githubusercontent.com/jtayl7/jtayl7.github.io/master/Weekly_Deaths_AZ_2019.csv"
         );
 
         var btn1 = document.getElementById("btn1");
