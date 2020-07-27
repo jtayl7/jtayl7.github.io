@@ -1,51 +1,133 @@
 <html>
-<script src='https://d3js.org/d3.v5.min.js'></script>
-<script src='https://d3js.org/d3-array.v2.min.js'></script>
-<style> circle {fill: lightblue; stroke: black;} </style>
-<body onload='init()'>
-<svg width = 1000 height = 1000>
-</svg>
-<script>
-async function init() {
-    const data = await d3.csv('https://jtayl7.github.io/Weekly_Deaths_AZ.csv')
-    
-    const margin = 60;
-    const width = 1000 - 2 * margin;
-    const height = 600 - 2 * margin;
+  <meta charset="utf-8" />
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+  <script src="https://d3js.org/d3-array.v2.min.js"></script>
+  <!-- <style> rect {fill: lightblue; stroke: black;} </style>  -->
+  <body onload="init()">
+    <style>
+      .button {
+        background-color: #4caf50; /* Green */
+        border: none;
+        color: white;
+        padding: 15px 25px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+      }
+    </style>
 
-    const svg = d3.select('svg');
+    <button class="button" id="btn1">Variable 1</button>
+    <button class="button" id="btn2">Variable 2</button>
+    <svg width="1000" height="600" style="border: solid;"></svg>
 
-    const chart = svg.append('g')
-    .attr('transform', `translate(${margin}, ${margin})`);
+    <script>
+      function barChart(data, predictor) {
+        const margin = 60;
+        const width = 1000 - 2 * margin;
+        const height = 600 - 2 * margin;
 
-    const yScale = d3.scaleLinear()
-    .range([height, 0])
-    .domain([0, 100]);
+        const weeksInYear = data.map((d) => d.mmwrweek);
+        //console.log(weeksInYear);
 
-    chart.append('g')
-    .call(d3.axisLeft(yScale));
+        const xScale = d3
+          .scaleBand()
+          .range([0, width])
+          .domain(weeksInYear)
+          .padding(0.2);
 
-    const xScale = d3.scaleBand()
-    .range([0, width])
-    .domain(data.map((d) => d.mmwrweek))
-    .padding(0.2)
+        const yScale = d3.scaleLinear().range([height, 0]).domain([0, 300]);
 
-chart.append('g')
-    .attr('transform', `translate(0, ${height})`)
-    .call(d3.axisBottom(xScale));
+        const svg = d3.select("svg");
 
-chart.selectAll()
-    .data(data)
-    .enter()
-    .append('rect')
-    .attr('x', (s) => xScale(s.mmwrweek))
-    .attr('y', (s) => yScale(s.septicemia_a40_a41))
-    .attr('height', (s) => height - yScale(s.septicemia_a40_a41))
-    .attr('width', xScale.bandwidth())
-}
+        const chart = svg
+          .append("g")
+          .attr("transform", `translate(${margin}, ${margin})`);
 
+        chart.append("g").call(d3.axisLeft(yScale));
 
+        chart
+          .append("g")
+          .attr("transform", `translate(0, ${height})`)
+          .call(d3.axisBottom(xScale));
 
-</script>
-</body>
+        chart
+          .selectAll()
+          .data(data)
+          .enter()
+          .append("rect")
+          .attr("class", "barchart")
+          .attr("x", (d) => xScale(d.mmwrweek))
+          .attr("y", (d) => yScale(d[predictor]))
+          .attr("height", (d) => height - yScale(d[predictor]))
+          .attr("width", xScale.bandwidth())
+          .on("mouseenter", function (d, i) {
+            d3.select(this).attr("fill", "blue");
+
+            chart
+              .append("line")
+              .attr("class", "divergence")
+              .attr("x1", 0)
+              .attr("y1", yScale(d[predictor]))
+              .attr("x2", width)
+              .attr("y2", yScale(d[predictor]))
+              .attr("stroke", "pink");
+          })
+          .on("mouseleave", function (d, i) {
+            d3.select(this).attr("fill", "black");
+
+            d3.select(this)
+              .transition()
+              .duration(300)
+              .attr("opacity", 1)
+              .attr("x", (a) => xScale(a.mmwrweek))
+              .attr("width", xScale.bandwidth());
+
+            chart.selectAll(".divergence").remove();
+          });
+
+        svg
+          .append("text")
+          .attr("x", -(height / 2) - margin)
+          .attr("y", margin / 2.4)
+          .attr("transform", "rotate(-90)")
+          .attr("text-anchor", "middle")
+          .text("Number of Deaths");
+
+        svg
+          .append("text")
+          .attr("x", width / 2 + margin)
+          .attr("y", 40)
+          .attr("text-anchor", "middle")
+          .text("Deaths from Malignant Neoplasms");
+
+        svg
+          .append("text")
+          .attr("x", width / 2 + margin)
+          .attr("y", 580)
+          .attr("text-anchor", "middle")
+          .text("Week of the Year");
+      }
+
+      async function init() {
+        const data = await d3.csv(
+          "https://jtayl7.github.io/Weekly_Deaths_AZ.csv"
+        );
+
+        var btn1 = document.getElementById("btn1");
+        var btn2 = document.getElementById("btn2");
+
+        barChart(data, "diabetes_mellitus_e10_e14");
+
+        btn1.addEventListener("click", function () {
+          d3.selectAll(".barchart").remove();
+          barChart(data, "malignant_neoplasms_c00_c97");
+        });
+        btn2.addEventListener("click", function () {
+          d3.selectAll(".barchart").remove();
+          barChart(data, "diabetes_mellitus_e10_e14");
+        });
+      }
+    </script>
+  </body>
 </html>
