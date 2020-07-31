@@ -1,4 +1,4 @@
-jurisdiction_of_occurrence,mmwryear,mmwrweek,week_ending_date,all_cause,natural_cause,septicemia_a40_a41,malignant_neoplasms_c00_c97,diabetes_mellitus_e10_e14,alzheimer_disease_g30,influenza_and_pneumonia_j09_j18,chronic_lower_respiratory,Oother_diseases_of_respiratory,nephritis_nephrotic_syndrome,symptoms_signs_and_abnormal,diseases_of_heart_i00_i09,cerebrovascular_diseases,covid_19_u071_multiple_cause_of_death,covid_19_u071_underlying_cause_of_death
+jurisdiction_of_occurrence,mmwryear,mmwrweek,week_ending_date,all_cause,natural_cause,septicemia_a40_a41,malignant_neoplasms_c00_c97,diabetes_mellitus_e10_e14,alzheimer_disease_g30,influenza_and_pneumonia_j09_j18,chronic_lower_respiratory,other_diseases_of_respiratory,nephritis_nephrotic_syndrome,symptoms_signs_and_abnormal,diseases_of_heart_i00_i09,cerebrovascular_diseases,covid_19_u071_multiple_cause_of_death,covid_19_u071_underlying_cause_of_death
 Arizona,2019,1,1/5/2019,1351,1224,12,260,44,61,34,86,23,27,20,314,59,0,0
 Arizona,2019,2,1/12/2019,1350,1211,10,263,49,52,28,101,25,17,22,310,59,0,0
 Arizona,2019,3,1/19/2019,1270,1147,10,256,46,78,27,84,24,15,28,256,70,0,0

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+  <meta charset="utf-8" />
+  <head>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      /* Create two equal columns that floats next to each other */
+      .column {
+        float: left;
+        width: 30%;
+        /* width: 300px; */
+        padding: 10px;
+        /* height: 300px; Should be removed. Only for demonstration */
+      }
+      .column-r {
+        float: right;
+        width: 70%;
+        /* width: 700px; */
+        padding: 10px;
+        /* height: 300px; Should be removed. Only for demonstration */
+      }
+
+      /* Clear floats after the columns */
+      .row:after {
+        content: "";
+        display: table;
+        clear: both;
+      }
+      .mySlides {
+        display: none;
+      }
+    </style>
+  </head>
+  <body onload="init()">
+    <h2>Covid Death in Arizona</h2>
+
+    <div class="row">
+      <div
+        class="column w3-round-xlarge"
+        id="column1"
+        style="background-color: #aaa;"
+      >
+        <h2>Navigation</h2>
+        <p>
+          This div occupies the left half This div occupies the left half This
+          div occupies the left half This div occupies New he left half This div
+          occupies the left half This div occupies the half This div occupies
+          the left half
+        </p>
+      </div>
+      <div class="column-r w3-round-xlarge" style="background-color: #bbb;">
+        <h2>Column 2</h2>
+        <p>Some text..</p>
+        <div class="w3-content" style="max-width: 1000px;">
+          <img
+            class="mySlides"
+            id="introSlide"
+            src="pan2.jpg"
+            style="width: 100%; visibility: hidden;"
+          />
+          <img class="mySlides" src="pan3.jpg" style="width: 100%;" />
+          <img class="mySlides" src="pan4.jpg" style="width: 100%;" />
+          <svg
+            class="mySlides"
+            width="800"
+            height="600"
+            id="svg_Bar"
+            style="border: solid;"
+          ></svg>
+        </div>
+
+        <div class="w3-center">
+          <div class="w3-section">
+            <button class="w3-button w3-light-grey" onclick="plusDivs(-1)">
+              ❮ Prev
+            </button>
+            <button class="w3-button w3-light-grey" onclick="plusDivs(1)">
+              Next ❯
+            </button>
+          </div>
+          <button class="w3-button demo" onclick="currentDiv(1)">2</button>
+          <button class="w3-button demo" onclick="currentDiv(2)">3</button>
+          <button class="w3-button demo" onclick="currentDiv(3)">4</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      async function init() {
+        let data = await d3.csv(
+          "https://jtayl7.github.io/Weekly_Deaths_AZ_2020.csv"
+        );
+
+        createNav("intro", "Intro");
+        createNav("timeline", "Timeline");
+        createNav("code", "Code");
+        createNav("cv2020", "Covid/Flu 2020");
+        createNav("cvp", "Covid/Flu Peak");
+        createNav("summary", "Summary");
+        createNav("explore", "Explore");
+
+        var nav_Intro = document.getElementById("intro");
+        nav_Intro.addEventListener("click", function () {
+          document.getElementById("introSlide").style.visibility = "visible";
+        });
+
+        barChart(data, nav_Intro);
+
+        var nav_Explore = document.getElementById("explore");
+        nav_Intro.addEventListener("click", function () {
+          document.getElementById("svg_bar").style.visibility = "visible";
+        });
+      }
+    </script>
+
+    <script>
+      var slideIndex = 1;
+      showDivs(slideIndex);
+
+      function plusDivs(n) {
+        showDivs((slideIndex += n));
+      }
+
+      function currentDiv(n) {
+        showDivs((slideIndex = n));
+      }
+
+      function showDivs(n) {
+        var i;
+        var x = document.getElementsByClassName("mySlides");
+        var dots = document.getElementsByClassName("demo");
+        if (n > x.length) {
+          slideIndex = 1;
+        }
+        if (n < 1) {
+          slideIndex = x.length;
+        }
+        for (i = 0; i < x.length; i++) {
+          x[i].style.display = "none";
+        }
+        for (i = 0; i < dots.length; i++) {
+          dots[i].className = dots[i].className.replace(" w3-red", "");
+        }
+        x[slideIndex - 1].style.display = "block";
+        dots[slideIndex - 1].className += " w3-red";
+      }
+
+      function createNav(id, label) {
+        d3.select("#column1")
+          .append("button")
+          .attr("id", id)
+          .attr(
+            "class",
+            "navButton w3-button w3-bar-item w3-button w3-padding w3-blue w3-round-xlarge"
+          )
+          .html(label)
+          .on("click", () => {
+            console.log("remove");
+          });
+
+        d3.select("#column1").append("br");
+      }
+
+      function barChart(data, btn) {
+        const margin = 60;
+        const width = 1000 - 2 * margin;
+        const height = 600 - 2 * margin;
+
+        const weeksInYear = data.map((d) => d.mmwrweek);
+
+        const xScale = d3
+          .scaleBand()
+          .range([0, width])
+          .domain(weeksInYear)
+          .padding(0.2);
+
+        const yScale = d3.scaleLinear().range([height, 0]).domain([0, 350]);
+
+        const svg = d3.select("svg");
+
+        const chart = svg
+          .append("g")
+          .attr("transform", `translate(${margin}, ${margin})`);
+
+        chart.append("g").call(d3.axisLeft(yScale));
+
+        chart
+          .append("g")
+          .attr("transform", `translate(0, ${height})`)
+          .call(d3.axisBottom(xScale));
+
+        var bar = chart
+          .selectAll()
+          .data(data)
+          .enter()
+          .append("rect")
+          .attr("class", "barchart")
+          .attr("x", (d) => xScale(d.mmwrweek))
+          .attr("y", (d) => yScale(d["diabetes_mellitus_e10_e14"]))
+          .attr("width", xScale.bandwidth())
+          //.transition()
+          //.duration(500)
+          //.attr("height", (d) => height - yScale(d[btn.title]))
+          .attr("fill", "#69b3a2");
+
+        bar
+          .transition()
+          .duration(500)
+          .attr(
+            "height",
+            (d) => height - yScale(d["diabetes_mellitus_e10_e14"])
+          );
+
+        bar.on("mouseenter", function (d, i) {
+          d3.select(this).attr("fill", "orange");
+
+          chart
+            .append("line")
+            .attr("class", "valueLine")
+            .attr("x1", 0)
+            .attr("y1", yScale(d["diabetes_mellitus_e10_e14"]))
+            .attr("x2", width)
+            .attr("y2", yScale(d["diabetes_mellitus_e10_e14"]))
+            .attr("stroke", "orange");
+        });
+
+        bar.on("mouseleave", function (d, i) {
+          d3.select(this).attr("fill", "#69b3a2");
+          chart.selectAll(".valueLine").remove();
+        });
+
+        svg
+          .append("text")
+          .attr("x", -(height / 2) - margin)
+          .attr("y", margin / 2.4)
+          .attr("transform", "rotate(-90)")
+          .attr("text-anchor", "middle")
+          .text("Number of Deaths");
+
+        svg
+          .append("text")
+          .attr("class", "title")
+          .attr("x", width / 2 + margin)
+          .attr("y", 40)
+          .attr("text-anchor", "middle")
+          .text("")
+          .text("Arizona Deaths from YOYOYO");
+
+        svg
+          .append("text")
+          .attr("x", width / 2 + margin)
+          .attr("y", 580)
+          .attr("text-anchor", "middle")
+          .text("Week of the Year");
+      }
+    </script>
+  </body>
+</html>
