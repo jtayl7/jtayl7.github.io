@@ -2,22 +2,100 @@
   <meta charset="utf-8" />
   <script src="https://d3js.org/d3.v5.min.js"></script>
   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" />
+  <style>
+    .text-block {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      background-color: black;
+      color: white;
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+  </style>
   <body onload="init()">
     <p>
       <svg
         width="1000"
-        height="1000"
+        height="600"
         id="svg_Bar"
         style="border: solid; display: block; margin: auto;"
         class="w3-cell-middle"
-      ></svg>
+      >
+        <g transform="translate(80,30)">
+          <rect width="20" height="20" style="fill: rgb(0, 0, 255);" />
+          <text x="24" y="16">Underlying Causes</text>
+
+          <rect x="0" y="30" width="20" height="20" style="fill: orange;" />
+          <text x="24" y="46">Multiple Causes</text>
+        </g>
+
+        <g transform="translate(340,260) rotate(10)">
+          <marker
+            id="arrowhead"
+            markerWidth="10"
+            markerHeight="7"
+            refX="0"
+            refY="3.5"
+            orient="auto"
+            style="stroke: brown; fill: brown;"
+          >
+            <polygon points="0 0, 10 3.5, 0 7" />
+          </marker>
+          <line
+            x1="90"
+            y1="90"
+            x2="150"
+            y2="150"
+            style="stroke: brown; stroke-width: 2;"
+            marker-end="url(#arrowhead)"
+          ></line>
+          <text x="60" y="60" transform="rotate(-10)">
+            <tspan style="font: bold 20px sans-serif;" x="0" dy="1em">
+              March 30th
+            </tspan>
+            <tspan style="fill: brown;" x="0" dy="1em">
+              &nbsp;&nbsp;&nbsp;Shutdown
+            </tspan>
+          </text>
+        </g>
+        <g transform="translate(530,180) rotate(10)">
+          <marker
+            id="arrowhead"
+            markerWidth="10"
+            markerHeight="7"
+            refX="0"
+            refY="3.5"
+            orient="auto"
+            style="stroke: brown; fill: brown;"
+          >
+            <polygon points="0 0, 10 3.5, 0 7" />
+          </marker>
+          <line
+            x1="90"
+            y1="90"
+            x2="150"
+            y2="150"
+            style="stroke: brown; stroke-width: 2;"
+            marker-end="url(#arrowhead)"
+          ></line>
+          <text x="60" y="60" transform="rotate(-10)">
+            <tspan style="font: bold 20px sans-serif;" x="0" dy="1em">
+              &nbsp;&nbsp;&nbsp;&nbsp;May 15th
+            </tspan>
+            <tspan style="fill: brown;" x="0" dy="1em">
+              Shutdown Expires
+            </tspan>
+          </text>
+        </g>
+      </svg>
     </p>
 
     <script>
       function barChart(data) {
         const margin = 60;
         const width = 1000 - 2 * margin;
-        const height = 1000 - 2 * margin;
+        const height = 600 - 2 * margin;
 
         const weeksInYear = data.map((d) => d.mmwrweek);
 
@@ -46,20 +124,6 @@
           .attr("transform", `translate(0, ${height})`)
           .call(d3.axisBottom(xScale));
 
-        // var bar = chart
-        //   .selectAll()
-        //   .data(data)
-        //   .enter()
-        //   .append("rect")
-        //   .attr("class", "barchart")
-        //   .attr("x", (d) => xScale(d.mmwrweek))
-        //   .attr("y", (d) => yScale(d["covid_19_u071_multiple_cause_of_death"]))
-        //   .attr("width", xScale.bandwidth())
-        //   //.transition()
-        //   //.duration(500)
-        //   //.attr("height", (d) => height - yScale(d[btn.title]))
-        //   .attr("fill", "#69b3a2");
-
         var colorScale = d3
           .scaleOrdinal()
           .domain([
@@ -87,42 +151,17 @@
               .data(d)
               .enter()
               .append("rect")
-              .attr("x", (p, i) => xScale(i))
-              //   .attr("log", function (d) {
-              //     console.log(d);
-              //   })
+              .attr("x", (p, i) => xScale(i + 1))
+              // .attr("log", function (d, i) {
+              //   console.log(i);
+              // })
               .attr("y", (p) => yScale(p[1]))
-
+              .transition()
+              .duration(1000)
               .attr("width", xScale.bandwidth())
               .attr("height", (p) => invert_yScale(p[1]) - invert_yScale(p[0]))
               .attr("fill", colorScale(d.key));
           });
-
-        // bar
-        //   .transition()
-        //   .duration(500)
-        //   .attr(
-        //     "height",
-        //     (d) => height - yScale(d["covid_19_u071_multiple_cause_of_death"])
-        //   );
-
-        // bar.on("mouseenter", function (d, i) {
-        //   d3.select(this).attr("fill", "orange");
-
-        //   chart
-        //     .append("line")
-        //     .attr("class", "valueLine")
-        //     .attr("x1", 0)
-        //     .attr("y1", yScale(d["covid_19_u071_underlying_cause_of_death"]))
-        //     .attr("x2", width)
-        //     .attr("y2", yScale(d["covid_19_u071_underlying_cause_of_death"]))
-        //     .attr("stroke", "orange");
-        // });
-
-        // bar.on("mouseleave", function (d, i) {
-        //   d3.select(this).attr("fill", "#69b3a2");
-        //   chart.selectAll(".valueLine").remove();
-        // });
 
         bar
           .on("mouseover", function () {
@@ -134,24 +173,24 @@
           .on("mousemove", function (d, i) {
             var xPosition = d3.mouse(this)[0] + 20;
             var yPosition = d3.mouse(this)[1] + 20;
-            console.log(weeksInYear);
 
             if (this.children[0].attributes.fill.nodeValue == "orange") {
               tooltip.attr(
                 "transform",
                 "translate(" + xPosition + "," + yPosition + ")"
               );
-              tooltip.select("text").text(d[0]);
+
+              tooltip.select("text").text("Multiple causes");
             } else {
               tooltip.attr(
                 "transform",
                 "translate(" + xPosition + "," + yPosition + ")"
               );
-              tooltip.select("text").text(d[1]);
+
+              tooltip.select("text").text("Underlying causes");
             }
           });
 
-        // Prep the tooltip bits, initial display is hidden
         var tooltip = svg
           .append("g")
           .attr("class", "tooltip")
@@ -194,12 +233,7 @@
           .attr("x", width / 2 + margin)
           .attr("y", 580)
           .attr("text-anchor", "middle")
-          .text("Week of the Year");
-      }
-
-      function clearChart() {
-        d3.selectAll(".title").remove();
-        d3.selectAll(".barchart").remove();
+          .text("Weeks of 2020");
       }
 
       async function init() {
