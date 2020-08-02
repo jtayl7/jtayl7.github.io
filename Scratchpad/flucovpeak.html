@@ -1,0 +1,158 @@
+<html>
+  <meta charset="utf-8" />
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" />
+  <link rel="stylesheet" type="text/css" href="./styles.css" />
+  <body onload="init()">
+    <div id="my_dataviz"></div>
+
+    <script>
+      async function init() {
+        const data = await d3.csv("https://jtayl7.github.io/covflu.csv");
+
+        // set the dimensions and margins of the graph
+        const margin = 60;
+        const width = 1000 - 2 * margin;
+        const height = 600 - 2 * margin;
+
+        // append the svg object to the body of the page
+        var svg = d3
+          .select("#my_dataviz")
+          .append("svg")
+          .attr("width", 1000)
+          .attr("height", 600)
+          .attr("class", "w3-cell-middle scene-border")
+          .attr("id", "mySvg")
+          .append("g")
+          .attr("transform", `translate(${margin}, ${margin})`);
+
+        // List of subgroups = header of the csv files = soil condition here
+        var subgroups = data.columns.slice(1, 3);
+
+        // List of groups = species here = value of the first column called group -> I show them on the X axis
+        var groups = d3
+          .map(data, function (d) {
+            return d.mmwrweek;
+          })
+          .keys();
+
+        // Add X axis
+        var x = d3.scaleBand().domain(groups).range([0, width]).padding([0.2]);
+        svg
+          .append("g")
+          .attr("transform", "translate(0," + height + ")")
+          .call(d3.axisBottom(x).tickSize(0));
+
+        // Add Y axis
+        var y = d3.scaleLinear().domain([0, 450]).range([height, 0]);
+        svg.append("g").call(d3.axisLeft(y));
+
+        // Another scale for subgroup position?
+        var xSubgroup = d3
+          .scaleBand()
+          .domain(subgroups)
+          .range([0, x.bandwidth()])
+          .padding([0.05]);
+
+        // color palette = one color per subgroup
+        var color = d3
+          .scaleOrdinal()
+          .domain(subgroups)
+          .range(["#bf0a30", "#fed700"]);
+
+        // Show the bars
+        svg
+          .append("g")
+          .selectAll("g")
+          // Enter in data = loop group per group
+          .data(data)
+          .enter()
+          .append("g")
+          .attr("transform", function (d) {
+            return "translate(" + x(d.mmwrweek) + ",0)";
+          })
+          .selectAll("rect")
+          .data(function (d) {
+            return subgroups.map(function (key) {
+              return { key: key, value: d[key] };
+            });
+          })
+          .enter()
+          .append("rect")
+          .transition()
+          .duration(1000)
+          .attr("x", function (d) {
+            return xSubgroup(d.key);
+          })
+          .attr("y", function (d) {
+            return y(d.value);
+          })
+          .attr("width", xSubgroup.bandwidth())
+          .attr("height", function (d) {
+            return height - y(d.value);
+          })
+          .attr("fill", function (d) {
+            return color(d.key);
+          });
+
+        var legend = d3
+          .select("#mySvg")
+          .append("g")
+          .attr("id", "legend")
+          .attr("transform", "translate(80,30)");
+
+        legend
+          .append("rect")
+          .attr("width", "20")
+          .attr("height", "20")
+          .attr("class", "legend1");
+
+        legend
+          .append("text")
+          .attr("x", "24")
+          .attr("y", "16")
+          .html("Covid-19: Primary");
+
+        legend
+          .append("rect")
+          .attr("x", "0")
+          .attr("y", "30")
+          .attr("width", "20")
+          .attr("height", "20")
+          .attr("class", "legend2_red");
+
+        legend
+          .append("text")
+          .attr("x", "24")
+          .attr("y", "46")
+          .html("Influenza and Pneumonia");
+
+        d3.select("#mySvg")
+          .append("text")
+          .attr("x", -(height / 2) - margin)
+          .attr("y", margin / 2.4)
+          .attr("transform", "rotate(-90)")
+          .attr("text-anchor", "middle")
+          .text("Total Deaths");
+
+        d3.select("#mySvg")
+          .append("text")
+          .attr("x", width / 2 + margin)
+          .attr("y", 580)
+          .attr("text-anchor", "middle")
+          .text("Peak Weeks");
+
+        var textBox = d3
+          .select("#mySvg")
+          .append("g")
+          .attr("id", "textBox")
+          .attr("transform", "translate(120, 360)");
+
+        var text = d3.select("#textBox").append("text").attr("id", "box");
+
+        text.append("tspan").attr("x", "0").attr("y", "0").text("class");
+        text.append("tspan").attr("x", "0").attr("y", "20").text("class");
+      }
+    </script>
+  </body>
+</html>

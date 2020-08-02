@@ -13,14 +13,20 @@
         class="w3-cell-middle"
       ></svg>
     </p>
-    <div class="w3-bar">
+    <!-- <div class="w3-bar">
       <button
         class="w3-button explore-btns"
         title="septicemia_a40_a41"
         id="bloodPoisoning"
       >
         Septicemia
-      </button>
+      </button> -->
+      <label class="switch w3-button w3-round-xxlarge"
+        ><input type="checkbox" id="togBtn" checked="true"/>
+        <div class="slider round">
+          <span class="on">2020</span><span class="off">2019</span>
+        </div></label
+      >
       <button
         class="w3-button explore-btns"
         title="malignant_neoplasms_c00_c97"
@@ -82,15 +88,25 @@
         title="covid_19_u071_multiple_cause_of_death"
         id="covidP"
       >
-        Covid - Primary
+        Covid: Secondary
       </button>
       <button
         class="w3-button explore-btns"
         title="covid_19_u071_underlying_cause_of_death"
         id="covidU"
       >
-        Covid - Underlying
+        Covid: Primary
       </button>
+      
+      
+
+      <!-- <button
+        class="w3-button explore-btns"
+        title="2019"
+        id="2019"
+      >
+        2019
+      </button> -->
     </div>
 
     <script>
@@ -165,6 +181,7 @@
           .attr("y", margin / 2.4)
           .attr("transform", "rotate(-90)")
           .attr("text-anchor", "middle")
+          .attr("id", "yText")
           .text("Total Deaths");
 
         // svg
@@ -181,12 +198,16 @@
           .attr("x", width / 2 + margin)
           .attr("y", 580)
           .attr("text-anchor", "middle")
+          .attr("id", "xText")
           .text("First 28 Weeks of 2020");
       }
 
       function clearChart() {
         d3.selectAll(".title").remove();
         d3.selectAll(".barchart").remove();
+        d3.selectAll(".tick").remove();
+        d3.selectAll("#xText").remove();
+        d3.selectAll("#yText").remove();
       }
 
       async function init() {
@@ -194,7 +215,7 @@
           "https://jtayl7.github.io/Weekly_Deaths_AZ_2020.csv"
         );
 
-        var btn_bloodPoisoning = document.getElementById("bloodPoisoning");
+        //var btn_bloodPoisoning = document.getElementById("bloodPoisoning");
         var btn_cancer = document.getElementById("cancer");
         var btn_diabetes = document.getElementById("diabetes");
         var btn_alzheimers = document.getElementById("alzheimers");
@@ -208,6 +229,8 @@
 
         // var btn_2019 = document.getElementById("2019");
         // btn_2019.addEventListener("click", async function () {
+        //   btn_covidP.disabled = true;
+        //   btn_covidU.disabled = true;
         //   data = await d3.csv(
         //     "https://jtayl7.github.io/Weekly_Deaths_AZ_2019.csv"
         //   );
@@ -216,49 +239,73 @@
         //   barChart(data, btn_bloodPoisoning);
         // });
 
-        barChart(data, btn_bloodPoisoning);
+        var togBtn = document.getElementById("togBtn");
+        togBtn.addEventListener("click", async function () {
+          if (!togBtn.checked) {
+            btn_covidP.disabled = true;
+            btn_covidU.disabled = true;
+            data = await d3.csv(
+              "https://jtayl7.github.io/Weekly_Deaths_AZ_2019.csv"
+            );
+            clearChart();
+            barChart(data, btn_cancer);
+            console.log(d3.select("#xText"));
+            d3.select("#xText").text("YOYOOY");
+          } else {
+            data = await d3.csv(
+              "https://jtayl7.github.io/Weekly_Deaths_AZ_2020.csv"
+            );
+            clearChart();
 
-        btn_bloodPoisoning.addEventListener("click", function () {
-          clearChart();
-          barChart(data, btn_bloodPoisoning);
+            barChart(data, btn_cancer);
+            btn_covidP.disabled = false;
+            btn_covidU.disabled = false;
+          }
         });
-        btn_cancer.addEventListener("click", function () {
+
+        barChart(data, btn_cancer);
+
+        // btn_bloodPoisoning.addEventListener("mouseover", function () {
+        //   clearChart();
+        //   barChart(data, btn_bloodPoisoning);
+        // });
+        btn_cancer.addEventListener("mouseover", function () {
           clearChart();
           barChart(data, btn_cancer);
         });
-        btn_diabetes.addEventListener("click", function () {
+        btn_diabetes.addEventListener("mouseover", function () {
           clearChart();
           barChart(data, btn_diabetes);
         });
-        btn_alzheimers.addEventListener("click", function () {
+        btn_alzheimers.addEventListener("mouseover", function () {
           clearChart();
           barChart(data, btn_alzheimers);
         });
-        btn_flu.addEventListener("click", function () {
+        btn_flu.addEventListener("mouseover", function () {
           clearChart();
           barChart(data, btn_flu);
         });
-        btn_clrd.addEventListener("click", function () {
+        btn_clrd.addEventListener("mouseover", function () {
           clearChart();
           barChart(data, btn_clrd);
         });
-        btn_kidney.addEventListener("click", function () {
+        btn_kidney.addEventListener("mouseover", function () {
           clearChart();
           barChart(data, btn_kidney);
         });
-        btn_heart.addEventListener("click", function () {
+        btn_heart.addEventListener("mouseover", function () {
           clearChart();
           barChart(data, btn_heart);
         });
-        btn_stroke.addEventListener("click", function () {
+        btn_stroke.addEventListener("mouseover", function () {
           clearChart();
           barChart(data, btn_stroke);
         });
-        btn_covidP.addEventListener("click", function () {
+        btn_covidP.addEventListener("mouseover", function () {
           clearChart();
           barChart(data, btn_covidP);
         });
-        btn_covidU.addEventListener("click", function () {
+        btn_covidU.addEventListener("mouseover", function () {
           clearChart();
           barChart(data, btn_covidU);
         });

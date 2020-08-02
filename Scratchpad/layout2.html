@@ -3,17 +3,23 @@
   <meta charset="utf-8" />
   <title>Layout2</title>
   <script src="https://d3js.org/d3.v5.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" />
   <style>
     .mySlides {
       display: none;
     }
+    .az-orange,
+    .w9-hover-red:hover {
+      color: #ffffff !important;
+      background-color: #ce5c17 !important;
+    }
   </style>
   <body onload="init()">
     <div class="w3-container">
-      <h2>Slideshow Indicators</h2>
-      <p>
+      <h2 id="header22" style="text-align: center;">Slideshow Indicators</h2>
+      <p style="text-align: center;">
         An example of using buttons to indicate how many slides there are in the
         slideshow, and which slide the user is currently viewing.
       </p>
@@ -22,25 +28,35 @@
     <div class="w3-content" style="max-width: 1200px;">
       <object
         class="mySlides"
-        data="Intro.html"
+        data="intro.html"
         style="width: 100%;"
-        height="800"
+        height="680"
       ></object>
       <object
         class="mySlides"
         data="total.html"
         style="width: 100%;"
-        height="800"
+        height="680"
       ></object>
-      <img class="mySlides" src="pan3.jpg" style="width: 100%;" height="800" />
-
       <object
         class="mySlides"
-        data="explore.html"
+        data="flucov20.html"
         style="width: 100%;"
         height="680"
       ></object>
-      <g class="mySlides" id="gBar" style="width: 100%;" height="600" />
+      <object
+        class="mySlides"
+        data="flucovpeak.html"
+        style="width: 100%;"
+        height="680"
+      ></object>
+      <object
+        class="mySlides"
+        data="explore2.html"
+        style="width: 100%;"
+        height="680"
+      ></object>
+      <g id="gBar" style="width: 100%;" height="600" />
     </div>
 
     <div class="w3-center">
@@ -52,10 +68,13 @@
           Next ❯
         </button>
       </div>
-      <button class="w3-button navBtn" onclick="currentDiv(1)">1</button>
+      <button class="w3-button navBtn" onclick="currentDiv(1);updateDiv();">
+        1
+      </button>
       <button class="w3-button navBtn" onclick="currentDiv(2)">2</button>
       <button class="w3-button navBtn" onclick="currentDiv(3)">3</button>
       <button class="w3-button navBtn" onclick="currentDiv(4)">4</button>
+      <button class="w3-button navBtn" onclick="currentDiv(5)">5</button>
     </div>
 
     <script>
@@ -88,10 +107,23 @@
           x[i].style.display = "none";
         }
         for (i = 0; i < dots.length; i++) {
-          dots[i].className = dots[i].className.replace(" w3-red", "");
+          dots[i].className = dots[i].className.replace(" az-orange", "");
         }
         x[slideIndex - 1].style.display = "block";
-        dots[slideIndex - 1].className += " w3-red";
+
+        // hack to force page to refresh
+        // x[slideIndex - 1].data += "?" + Math.floor(Math.random() * 1000);
+
+        dots[slideIndex - 1].className += " az-orange";
+      }
+
+      function updateDiv() {
+        //console.log("here");
+        //document.getElementById("#svg_Bar").reload(true);
+        //$("#svg_Bar").load(window.location.href + "#svg_Bar");
+        //d3.select("#header22").text("CHANGED YO");
+        //console.log("here");
+        //console.log(d3.selectAll("h2"));
       }
     </script>
   </body>
