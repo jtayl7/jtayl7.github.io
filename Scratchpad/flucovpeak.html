@@ -121,11 +121,7 @@
           .attr("height", "20")
           .attr("class", "legend2_red");
 
-        legend
-          .append("text")
-          .attr("x", "24")
-          .attr("y", "46")
-          .html("Influenza and Pneumonia");
+        legend.append("text").attr("x", "24").attr("y", "46").html("Influenza");
 
         d3.select("#mySvg")
           .append("text")
@@ -146,12 +142,44 @@
           .select("#mySvg")
           .append("g")
           .attr("id", "textBox")
-          .attr("transform", "translate(120, 360)");
+          .attr("transform", "translate(365, 120)");
 
-        var text = d3.select("#textBox").append("text").attr("id", "box");
+        var border = d3
+          .select("#textBox")
+          .append("rect")
+          .attr("width", "270")
+          .attr("height", "100")
+          .attr("style", "stroke: #002868;")
+          .attr("fill-opacity", "0")
+          .attr("x", "-4")
+          .attr("y", "-6");
 
-        text.append("tspan").attr("x", "0").attr("y", "0").text("class");
-        text.append("tspan").attr("x", "0").attr("y", "20").text("class");
+        var text = d3.select("#textBox").append("text");
+
+        text
+          .append("tspan")
+          .attr("class", "anno-text1")
+          .attr("x", "33")
+          .attr("dy", "1em")
+          .text("Covid-19 Still Worse");
+        text
+          .append("tspan")
+          .attr("class", "anno-text2")
+          .attr("x", "13")
+          .attr("dy", "1.5em")
+          .text("Even after removing secondary");
+        text
+          .append("tspan")
+          .attr("class", "anno-text2")
+          .attr("x", "7")
+          .attr("dy", "1.5em")
+          .text("deaths and handpicking flu stats,");
+        text
+          .append("tspan")
+          .attr("class", "anno-text2")
+          .attr("x", "25")
+          .attr("dy", "1.5em")
+          .text("Covid-19 is still far deadlier.");
       }
     </script>
   </body>

@@ -19,7 +19,7 @@
           <text x="24" y="46">Covid-19: Secondary</text>
         </g>
 
-        <g transform="translate(340,260) rotate(10)">
+        <g transform="translate(125,250) rotate(30)">
           <marker
             id="arrowhead"
             markerWidth="10"
@@ -33,13 +33,13 @@
           </marker>
           <line
             x1="90"
-            y1="90"
-            x2="150"
-            y2="150"
+            y1="70"
+            x2="90"
+            y2="200"
             class="anno-line"
             marker-end="url(#arrowhead)"
           ></line>
-          <text x="60" y="60" transform="rotate(-10)">
+          <text x="60" y="60" transform="rotate(-30)">
             <tspan class="anno-text1" x="0" dy="1em">
               &nbsp;&nbsp;March 30th
             </tspan>
@@ -48,7 +48,7 @@
             </tspan>
           </text>
         </g>
-        <g transform="translate(530,180) rotate(10)">
+        <g transform="translate(363,170) rotate(0)">
           <marker
             id="arrowhead"
             markerWidth="10"
@@ -61,176 +61,205 @@
             <polygon points="0 0, 10 3.5, 0 7" />
           </marker>
           <line
-            x1="90"
-            y1="90"
-            x2="150"
-            y2="150"
+            x1="108"
+            y1="70"
+            x2="108"
+            y2="185"
             class="anno-line"
             marker-end="url(#arrowhead)"
           ></line>
-          <text x="60" y="60" transform="rotate(-10)">
-            <tspan class="anno-text1" x="0" dy="1em">
+          <text y="30" transform="rotate(0)">
+            <tspan class="anno-text1" x="40" dy="1em">
               &nbsp;&nbsp;&nbsp;&nbsp;May 15th
             </tspan>
-            <tspan class="anno-text2" x="0" dy="1em">
+            <tspan class="anno-text2" x="35" dy="1em">
               Shutdown Expires
+            </tspan>
+          </text>
+        </g>
+        <g transform="translate(472,180) rotate(0)">
+          <marker
+            id="arrowhead"
+            markerWidth="10"
+            markerHeight="7"
+            refX="0"
+            refY="3.5"
+            orient="auto"
+            class="anno-marker"
+          >
+            <polygon points="0 0, 10 3.5, 0 7" />
+          </marker>
+          <line
+            x1="108"
+            y1="10"
+            x2="108"
+            y2="185"
+            class="anno-line"
+            marker-end="url(#arrowhead)"
+          ></line>
+          <text y="-35" transform="rotate(0)">
+            <tspan class="anno-text1" x="40" dy="1em">
+              &nbsp;&nbsp;&nbsp;&nbsp;May 29th
+            </tspan>
+            <tspan class="anno-text2" x="20" dy="1.1em">
+              Memorial Day Weekend
             </tspan>
           </text>
         </g>
       </svg>
     </p>
-
-    <script>
-      function barChart(data) {
-        const margin = 60;
-        const width = 1000 - 2 * margin;
-        const height = 600 - 2 * margin;
-
-        const weeksInYear = data.map((d) => d.mmwrweek);
-
-        const xScale = d3
-          .scaleBand()
-          .range([0, width])
-          .domain(weeksInYear)
-          .padding(0.2);
-
-        const yScale = d3.scaleLinear().range([height, 0]).domain([0, 700]);
-        const invert_yScale = d3
-          .scaleLinear()
-          .range([height, 0])
-          .domain([700, 0]);
-
-        const svg = d3.select("svg");
-
-        const chart = svg
-          .append("g")
-          .attr("transform", `translate(${margin}, ${margin})`);
-
-        chart.append("g").call(d3.axisLeft(yScale));
-
-        chart
-          .append("g")
-          .attr("transform", `translate(0, ${height})`)
-          .call(d3.axisBottom(xScale));
-
-        var colorScale = d3
-          .scaleOrdinal()
-          .domain([
-            "covid_19_u071_multiple_cause_of_death",
-            "covid_19_u071_underlying_cause_of_death",
-          ])
-          .range(["#ce5c17", "#FED700"]);
-
-        var stackLayout = d3
-          .stack()
-          .keys([
-            "covid_19_u071_multiple_cause_of_death",
-            "covid_19_u071_underlying_cause_of_death",
-          ]);
-
-        var bar = chart
-          .selectAll()
-          .data(stackLayout(data))
-          .enter()
-          .append("g")
-          .attr("class", "barchart")
-          .each(function (d) {
-            d3.select(this)
-              .selectAll("rect")
-              .data(d)
-              .enter()
-              .append("rect")
-              .attr("x", (p, i) => xScale(i + 1))
-              // .attr("log", function (d, i) {
-              //   console.log(i);
-              // })
-              .attr("y", (p) => yScale(p[1]))
-              .transition()
-              .duration(1000)
-              .attr("width", xScale.bandwidth())
-              .attr("height", (p) => invert_yScale(p[1]) - invert_yScale(p[0]))
-              .attr("fill", colorScale(d.key));
-          });
-
-        bar
-          .on("mouseover", function () {
-            tooltip.style("display", null);
-          })
-          .on("mouseout", function () {
-            tooltip.style("display", "none");
-          })
-          .on("mousemove", function (d, i) {
-            var xPosition = d3.mouse(this)[0] + 20;
-            var yPosition = d3.mouse(this)[1] + 20;
-
-            if (this.children[0].attributes.fill.nodeValue == "#BF0A30") {
-              tooltip.attr(
-                "transform",
-                "translate(" + xPosition + "," + yPosition + ")"
-              );
-
-              tooltip.select("text").text("Multiple causes");
-            } else {
-              tooltip.attr(
-                "transform",
-                "translate(" + xPosition + "," + yPosition + ")"
-              );
-
-              tooltip.select("text").text("Underlying causes");
-            }
-          });
-
-        var tooltip = svg
-          .append("g")
-          .attr("class", "tooltip")
-          .style("display", "none");
-
-        tooltip
-          .append("rect")
-          .attr("width", 30)
-          .attr("height", 20)
-          .attr("fill", "white")
-          .style("opacity", 0.5);
-
-        tooltip
-          .append("text")
-          .attr("x", 15)
-          .attr("dy", "1.2em")
-          .style("text-anchor", "middle")
-          .attr("font-size", "12px")
-          .attr("font-weight", "bold");
-
-        svg
-          .append("text")
-          .attr("x", -(height / 2) - margin)
-          .attr("y", margin / 2.4)
-          .attr("transform", "rotate(-90)")
-          .attr("text-anchor", "middle")
-          .text("Total Deaths");
-
-        // svg
-        //   .append("text")
-        //   .attr("class", "title")
-        //   .attr("x", width / 2 + margin)
-        //   .attr("y", 40)
-        //   .attr("text-anchor", "middle")
-        //   .text("")
-        //   .text("Arizona Deaths from Covid-19");
-
-        svg
-          .append("text")
-          .attr("x", width / 2 + margin)
-          .attr("y", 580)
-          .attr("text-anchor", "middle")
-          .text("First 28 Weeks of 2020");
-      }
-
-      async function init() {
-        let data = await d3.csv(
-          "https://jtayl7.github.io/Weekly_Deaths_AZ_2020.csv"
-        );
-        barChart(data);
-      }
-    </script>
   </body>
+
+  <script>
+    function barChart(data) {
+      const margin = 60;
+      const width = 1000 - 2 * margin;
+      const height = 600 - 2 * margin;
+
+      const weeksInYear = data.map((d) => d.mmwrweek);
+
+      const xScale = d3
+        .scaleBand()
+        .range([0, width])
+        .domain(weeksInYear)
+        .padding(0.2);
+
+      const yScale = d3.scaleLinear().range([height, 0]).domain([0, 700]);
+      const invert_yScale = d3
+        .scaleLinear()
+        .range([height, 0])
+        .domain([700, 0]);
+
+      const svg = d3.select("svg");
+
+      const chart = svg
+        .append("g")
+        .attr("transform", `translate(${margin}, ${margin})`);
+
+      chart.append("g").call(d3.axisLeft(yScale));
+
+      chart
+        .append("g")
+        .attr("transform", `translate(0, ${height})`)
+        .call(d3.axisBottom(xScale));
+
+      var colorScale = d3
+        .scaleOrdinal()
+        .domain([
+          "covid_19_u071_multiple_cause_of_death",
+          "covid_19_u071_underlying_cause_of_death",
+        ])
+        .range(["#ce5c17", "#FED700"]);
+
+      var stackLayout = d3
+        .stack()
+        .keys([
+          "covid_19_u071_multiple_cause_of_death",
+          "covid_19_u071_underlying_cause_of_death",
+        ]);
+
+      var bar = chart
+        .selectAll()
+        .data(stackLayout(data))
+        .enter()
+        .append("g")
+        .attr("class", "barchart")
+        .each(function (d) {
+          d3.select(this)
+            .selectAll("rect")
+            .data(d)
+            .enter()
+            .append("rect")
+            .attr("x", (p, i) => xScale(i + 13))
+            // .attr("log", function (d, i) {
+            //   console.log(i);
+            // })
+            .attr("y", (p) => yScale(p[1]))
+            .transition()
+            .duration(1000)
+            .attr("width", xScale.bandwidth())
+            .attr("height", (p) => invert_yScale(p[1]) - invert_yScale(p[0]))
+            .attr("fill", colorScale(d.key));
+        });
+
+      // bar
+      //   .on("mouseover", function () {
+      //     tooltip.style("display", null);
+      //   })
+      //   .on("mouseout", function () {
+      //     tooltip.style("display", "none");
+      //   })
+      //   .on("mousemove", function (d, i) {
+      //     var xPosition = d3.mouse(this)[0] + 20;
+      //     var yPosition = d3.mouse(this)[1] + 20;
+
+      //     if (this.children[0].attributes.fill.nodeValue == "#BF0A30") {
+      //       tooltip.attr(
+      //         "transform",
+      //         "translate(" + xPosition + "," + yPosition + ")"
+      //       );
+
+      //       tooltip.select("text").text("Multiple causes");
+      //     } else {
+      //       tooltip.attr(
+      //         "transform",
+      //         "translate(" + xPosition + "," + yPosition + ")"
+      //       );
+
+      //       tooltip.select("text").text("Underlying causes");
+      //     }
+      //   });
+
+      // var tooltip = svg
+      //   .append("g")
+      //   .attr("class", "tooltip")
+      //   .style("display", "none");
+
+      // tooltip
+      //   .append("rect")
+      //   .attr("width", 30)
+      //   .attr("height", 20)
+      //   .attr("fill", "white")
+      //   .style("opacity", 0.5);
+
+      // tooltip
+      //   .append("text")
+      //   .attr("x", 15)
+      //   .attr("dy", "1.2em")
+      //   .style("text-anchor", "middle")
+      //   .attr("font-size", "12px")
+      //   .attr("font-weight", "bold");
+
+      svg
+        .append("text")
+        .attr("x", -(height / 2) - margin)
+        .attr("y", margin / 2.4)
+        .attr("transform", "rotate(-90)")
+        .attr("text-anchor", "middle")
+        .text("Total Deaths");
+
+      // svg
+      //   .append("text")
+      //   .attr("class", "title")
+      //   .attr("x", width / 2 + margin)
+      //   .attr("y", 40)
+      //   .attr("text-anchor", "middle")
+      //   .text("")
+      //   .text("Arizona Deaths from Covid-19");
+
+      svg
+        .append("text")
+        .attr("x", width / 2 + margin)
+        .attr("y", 580)
+        .attr("text-anchor", "middle")
+        .text("First 28 Weeks of 2020");
+    }
+
+    async function init() {
+      let data = await d3.csv(
+        "https://jtayl7.github.io/Weekly_Deaths_AZ_2020_weeks13-28.csv"
+      );
+      barChart(data);
+    }
+  </script>
 </html>

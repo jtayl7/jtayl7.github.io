@@ -16,13 +16,10 @@
       background-color: #ce5c17 !important;
     }
   </style>
-  <body onload="init()">
+  <body onload="updateTitle1()">
     <div class="w3-container">
-      <h2 id="header22" style="text-align: center;">Slideshow Indicators</h2>
-      <p style="text-align: center;">
-        An example of using buttons to indicate how many slides there are in the
-        slideshow, and which slide the user is currently viewing.
-      </p>
+      <h2 id="header" style="text-align: center;"></h2>
+      <p id="desc" style="text-align: center; white-space: pre;"></p>
     </div>
 
     <div class="w3-content" style="max-width: 1200px;">
@@ -40,13 +37,25 @@
       ></object>
       <object
         class="mySlides"
-        data="flucov20.html"
+        data="flucov20_all.html"
+        style="width: 100%;"
+        height="680"
+      ></object>
+      <object
+        class="mySlides"
+        data="flucov20_primary.html"
         style="width: 100%;"
         height="680"
       ></object>
       <object
         class="mySlides"
         data="flucovpeak.html"
+        style="width: 100%;"
+        height="680"
+      ></object>
+      <object
+        class="mySlides"
+        data="conclusion.html"
         style="width: 100%;"
         height="680"
       ></object>
@@ -61,70 +70,163 @@
 
     <div class="w3-center">
       <div class="w3-section">
-        <button class="w3-button w3-light-grey" onclick="plusDivs(-1)">
+        <button
+          class="w3-button w3-light-grey"
+          id="prev"
+          disabled="true"
+          onclick="plusDivs(-1)"
+        >
           ❮ Prev
         </button>
         <button class="w3-button w3-light-grey" onclick="plusDivs(1)">
           Next ❯
         </button>
       </div>
-      <button class="w3-button navBtn" onclick="currentDiv(1);updateDiv();">
+      <button class="w3-button navBtn" onclick="currentDiv(1);updateTitle1();">
         1
       </button>
-      <button class="w3-button navBtn" onclick="currentDiv(2)">2</button>
-      <button class="w3-button navBtn" onclick="currentDiv(3)">3</button>
-      <button class="w3-button navBtn" onclick="currentDiv(4)">4</button>
-      <button class="w3-button navBtn" onclick="currentDiv(5)">5</button>
+      <button class="w3-button navBtn" onclick="currentDiv(2);updateTitle2();">
+        2
+      </button>
+      <button class="w3-button navBtn" onclick="currentDiv(3);updateTitle3();">
+        3
+      </button>
+      <button class="w3-button navBtn" onclick="currentDiv(4);updateTitle4();">
+        4
+      </button>
+      <button class="w3-button navBtn" onclick="currentDiv(5);updateTitle5();">
+        5
+      </button>
+      <button class="w3-button navBtn" onclick="currentDiv(6);updateTitle6();">
+        6
+      </button>
+      <button class="w3-button navBtn" onclick="currentDiv(7);updateTitle7();">
+        7
+      </button>
     </div>
-
-    <script>
-      function init() {}
-    </script>
-
-    <script>
-      var slideIndex = 1;
-      showDivs(slideIndex);
-
-      function plusDivs(n) {
-        showDivs((slideIndex += n));
-      }
-
-      function currentDiv(n) {
-        showDivs((slideIndex = n));
-      }
-
-      function showDivs(n) {
-        var i;
-        var x = document.getElementsByClassName("mySlides");
-        var dots = document.getElementsByClassName("navBtn");
-        if (n > x.length) {
-          slideIndex = 1;
-        }
-        if (n < 1) {
-          slideIndex = x.length;
-        }
-        for (i = 0; i < x.length; i++) {
-          x[i].style.display = "none";
-        }
-        for (i = 0; i < dots.length; i++) {
-          dots[i].className = dots[i].className.replace(" az-orange", "");
-        }
-        x[slideIndex - 1].style.display = "block";
-
-        // hack to force page to refresh
-        // x[slideIndex - 1].data += "?" + Math.floor(Math.random() * 1000);
-
-        dots[slideIndex - 1].className += " az-orange";
-      }
-
-      function updateDiv() {
-        //console.log("here");
-        //document.getElementById("#svg_Bar").reload(true);
-        //$("#svg_Bar").load(window.location.href + "#svg_Bar");
-        //d3.select("#header22").text("CHANGED YO");
-        //console.log("here");
-        //console.log(d3.selectAll("h2"));
-      }
-    </script>
   </body>
+  <script>
+    var slideIndex = 1;
+    showDivs(slideIndex);
+
+    function plusDivs(n) {
+      showDivs((slideIndex += n));
+      if (slideIndex == 1) {
+        updateTitle1();
+      } else if (slideIndex == 2) {
+        updateTitle2();
+      } else if (slideIndex == 3) {
+        updateTitle3();
+      } else if (slideIndex == 4) {
+        updateTitle4();
+      } else if (slideIndex == 5) {
+        updateTitle5();
+      } else if (slideIndex == 6) {
+        updateTitle6();
+      } else {
+        updateTitle7();
+      }
+    }
+
+    function currentDiv(n) {
+      showDivs((slideIndex = n));
+    }
+
+    function showDivs(n) {
+      var i;
+      var x = document.getElementsByClassName("mySlides");
+      var dots = document.getElementsByClassName("navBtn");
+      if (n > x.length) {
+        slideIndex = 1;
+      }
+      if (n < 1) {
+        slideIndex = x.length;
+      }
+      for (i = 0; i < x.length; i++) {
+        x[i].style.display = "none";
+      }
+      for (i = 0; i < dots.length; i++) {
+        dots[i].className = dots[i].className.replace(" az-orange", "");
+      }
+      x[slideIndex - 1].style.display = "block";
+
+      // hack to force page to refresh
+      // x[slideIndex - 1].data += "?" + Math.floor(Math.random() * 1000);
+
+      dots[slideIndex - 1].className += " az-orange";
+    }
+
+    function updateDiv() {
+      //console.log("here");
+      //document.getElementById("#svg_Bar").reload(true);
+      //$("#svg_Bar").load(window.location.href + "#svg_Bar");
+      //d3.select("#header22").text("CHANGED YO");
+      //console.log("here");
+      //console.log(d3.selectAll("h2"));
+    }
+
+    function updateTitle1() {
+      document.getElementById("header").textContent =
+        "Arizona: Global Covid-19 Hotspot";
+      document.getElementById("desc").textContent =
+        "By the first week of July 2020, with 3,300 cases per 1 million population, Arizona (AZ) had become the number 1 Covid-19 \r\n" +
+        "hotspot not only in the Unites States but it had the most per capita cases in the entire world. Up until late May Arizona had been largely \r\n" +
+        "unaffected by Covid-19, so how did we get here and how many people lives did we sacrifice?";
+    }
+
+    function updateTitle2() {
+      document.getElementById("prev").disabled = false;
+      document.getElementById("header").textContent =
+        "Arizona: Closed Late, Opened Early";
+      document.getElementById("desc").textContent =
+        "Considering deaths lag cases, AZ was on the down swing but a combination of opening without a plan and a populace flippant about social distancing and mask wearing ended up costing \r\n" +
+        "many AZ lives that otherwise could have been spared. Not only did AZ open too early but we did so right before arguably the biggest party weekend of the year, Memorial Day weekend. \r\n" +
+        "Our nightclubs, restaurants, bars, rivers (tubing the Salt River is very popular in the summer) became jam packed with people and almost none of them wearing masks.";
+    }
+
+    function updateTitle3() {
+      document.getElementById("header").textContent =
+        "Arizona: It's Just the Flu Bro";
+      document.getElementById("desc").textContent =
+        "One of the biggest reasons many Arizonans did not take social disatancing or mask wearing seriously was the prevailing attitude that Covid-19 was \r\n" +
+        "similar in deadliness to Influenza. However the numbers were not bearing that out, once Covid-19 hit AZ, only that first week did Influenza result in \r\n" +
+        "more casualities. However many argued that was mostly because many Covid-19 deaths were actually caused primarily by other diseases.";
+    }
+
+    function updateTitle4() {
+      document.getElementById("header").textContent =
+        "Arizona: Covid-19 Primary vs Flu";
+      document.getElementById("desc").textContent =
+        "So to address that argument we removed from our Covid-19 death total, all those where Covid-19 was not considered the primary cause of death.\r\n" +
+        "While it did cut Covid-19 death totals almost in half, Influenza was still less far less deadlier than Covid-19.\r\n" +
+        "Another common argument brought up was that Influenza declines in the Spring and Summer so of course it'll be lower.";
+    }
+
+    function updateTitle5() {
+      document.getElementById("header").textContent =
+        "Arizona: Covid-19 Primary vs Flu Peak Season";
+      document.getElementById("desc").textContent =
+        "So we analyzed Influenza deaths over the past year and cherry picked the worst 16 week span possible and compared it to the 16 weeks of Covid-19 deaths, \r\n" +
+        "once again only counting deaths where Covid-19 was the primary cause. However, even when compared to the most deadly span of Influenza in the past 52 weeks \r\n" +
+        "Covid-19 was still several orders of magnitude more deadly to Arizonans than Influenza.";
+    }
+
+    function updateTitle6() {
+      document.getElementById("header").textContent =
+        "Arizona: 4534 Black Dots, Each One was a Life";
+      document.getElementById("desc").textContent =
+        "The data clearly shows Covid-19 is deadlier than Influenza and our government leaders and citizens should have respected it more. That said we have learned\r\n" +
+        "from our mistakes and are now taking social distancing and wearing masks much more seriously and our leaders have enacted sensible policies to curb the spread. We \r\n" +
+        "are now heading in the right direction. Feel free to explore Arizona mortality data more in depth, including diseases other than Covid-19 and Influenza.";
+    }
+
+    function updateTitle7() {
+      document.getElementById("header").textContent =
+        "Arizona: Health Related Deaths";
+      document.getElementById("desc").textContent =
+        "Hover over and button to see that data. \r\n" +
+        "Hover over the bar charts to better gauge the counts. \r\n" +
+        "Toggle between 2019 and 2020 data.";
+    }
+  </script>
 </html>

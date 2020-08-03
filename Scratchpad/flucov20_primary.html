@@ -1,0 +1,203 @@
+<html>
+  <meta charset="utf-8" />
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" />
+  <link rel="stylesheet" type="text/css" href="./styles.css" />
+  <body onload="init()">
+    <p>
+      <svg
+        width="1000"
+        height="600"
+        id="svg_Bar"
+        class="scene-border w3-cell-middle"
+      >
+        <g transform="translate(80,30)">
+          <rect width="20" height="20" class="legend1" />
+          <text x="24" y="16">Covid-19: Primary</text>
+
+          <rect x="0" y="30" width="20" height="20" class="legend2_red" />
+          <text x="24" y="46">Influenza</text>
+        </g>
+        <g transform="translate(125,250) rotate(30)">
+          <marker
+            id="arrowhead"
+            markerWidth="10"
+            markerHeight="7"
+            refX="0"
+            refY="3.5"
+            orient="auto"
+            class="anno-marker"
+          >
+            <polygon points="0 0, 10 3.5, 0 7" />
+          </marker>
+          <line
+            x1="90"
+            y1="70"
+            x2="90"
+            y2="200"
+            class="anno-line"
+            marker-end="url(#arrowhead)"
+          ></line>
+          <text y="60" transform="rotate(-30)">
+            <tspan class="anno-text1" x="5" dy="1em">
+              37 Deaths
+            </tspan>
+            <tspan class="anno-text2" x="-30" dy="1em">
+              Influenza Worst Week
+            </tspan>
+          </text>
+        </g>
+        <g transform="translate(770,105) rotate(10)">
+          <marker
+            id="arrowhead"
+            markerWidth="10"
+            markerHeight="7"
+            refX="0"
+            refY="3.5"
+            orient="auto"
+            class="anno-marker"
+          >
+            <polygon points="0 0, 10 3.5, 0 7" />
+          </marker>
+          <line
+            x1="90"
+            y1="90"
+            x2="150"
+            y2="150"
+            class="anno-line"
+            marker-end="url(#arrowhead)"
+          ></line>
+          <text y="60" transform="rotate(-10)">
+            <tspan class="anno-text1" x="15" dy="1em">
+              333 Deaths
+            </tspan>
+            <tspan class="anno-text2" x="-10" dy="1em">
+              Covid-19 Worst Week
+            </tspan>
+          </text>
+        </g>
+        <!-- <g transform="translate(365,120) rotate(0)">
+          <rect
+            width="270"
+            height="100"
+            style="stroke: #002868;"
+            fill-opacity="0"
+            x="-6"
+            y="-4"
+          ></rect>
+          <text>
+            <tspan class="anno-text1" x="33" dy="1em">
+              Covid-19 Still Worse
+            </tspan>
+            <tspan class="anno-text2" x="3" dy="1.5em">
+              Even when we remove secondary
+            </tspan>
+            <tspan class="anno-text2" x="20" dy="1.5em">
+              deaths from Covid-19 totals,
+            </tspan>
+            <tspan class="anno-text2" x="20" dy="1.5em">
+              it still far outpaces Influenza.
+            </tspan>
+          </text>
+        </g> -->
+      </svg>
+    </p>
+
+    <script>
+      function barChart(data) {
+        const margin = 60;
+        const width = 1000 - 2 * margin;
+        const height = 600 - 2 * margin;
+
+        const weeksInYear = data.map((d) => d.mmwrweek);
+
+        const xScale = d3
+          .scaleBand()
+          .range([0, width])
+          .domain(weeksInYear)
+          .padding(0.2);
+
+        const yScale = d3.scaleLinear().range([height, 0]).domain([0, 750]);
+        const invert_yScale = d3
+          .scaleLinear()
+          .range([height, 0])
+          .domain([750, 0]);
+
+        const svg = d3.select("svg");
+
+        const chart = svg
+          .append("g")
+          .attr("transform", `translate(${margin}, ${margin})`);
+
+        chart.append("g").call(d3.axisLeft(yScale));
+
+        chart
+          .append("g")
+          .attr("transform", `translate(0, ${height})`)
+          .call(d3.axisBottom(xScale));
+
+        var colorScale = d3
+          .scaleOrdinal()
+          .domain([
+            "influenza_and_pneumonia_j09_j18",
+            "covid_19_u071_underlying_cause_of_death",
+          ])
+          .range(["#bf0a30", "#fed700"]);
+
+        var stackLayout = d3
+          .stack()
+          .keys([
+            "influenza_and_pneumonia_j09_j18",
+            "covid_19_u071_underlying_cause_of_death",
+          ]);
+
+        var bar = chart
+          .selectAll()
+          .data(stackLayout(data))
+          .enter()
+          .append("g")
+          .attr("class", "barchart")
+          .each(function (d) {
+            d3.select(this)
+              .selectAll("rect")
+              .data(d)
+              .enter()
+              .append("rect")
+              .attr("x", (p, i) => xScale(i + 13))
+              // .attr("log", function (d, i) {
+              //   console.log(i);
+              // })
+              .attr("y", (p) => yScale(p[1]))
+              .transition()
+              .duration(1000)
+              .attr("width", xScale.bandwidth())
+              .attr("height", (p) => invert_yScale(p[1]) - invert_yScale(p[0]))
+              .attr("fill", colorScale(d.key));
+          });
+
+        svg
+          .append("text")
+          .attr("x", -(height / 2) - margin)
+          .attr("y", margin / 2.4)
+          .attr("transform", "rotate(-90)")
+          .attr("text-anchor", "middle")
+          .text("Total Deaths");
+
+        svg
+          .append("text")
+          .attr("x", width / 2 + margin)
+          .attr("y", 580)
+          .attr("text-anchor", "middle")
+          .text("Weeks 13-28 of 2020");
+      }
+
+      async function init() {
+        let data = await d3.csv(
+          "https://jtayl7.github.io/Weekly_Deaths_AZ_2020_weeks13-28.csv"
+        );
+
+        barChart(data);
+      }
+    </script>
+  </body>
+</html>

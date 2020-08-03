@@ -13,66 +13,32 @@
       >
         <g transform="translate(80,30)">
           <rect width="20" height="20" class="legend1" />
-          <text x="24" y="16">Covid-19: Primary</text>
+          <text x="24" y="16">Covid-19</text>
 
           <rect x="0" y="30" width="20" height="20" class="legend2_red" />
-          <text x="24" y="46">Influenza and Pneumonia</text>
+          <text x="24" y="46">Influenza</text>
         </g>
-        <g transform="translate(310,270) rotate(10)">
-          <marker
-            id="arrowhead"
-            markerWidth="10"
-            markerHeight="7"
-            refX="0"
-            refY="3.5"
-            orient="auto"
-            class="anno-marker"
-          >
-            <polygon points="0 0, 10 3.5, 0 7" />
-          </marker>
-          <line
-            x1="90"
-            y1="90"
-            x2="150"
-            y2="150"
-            class="anno-line"
-            marker-end="url(#arrowhead)"
-          ></line>
-          <text x="60" y="60" transform="rotate(-10)">
-            <tspan class="anno-text1" x="0" dy="1em">
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;37 Deaths
+        <g transform="translate(365,120) rotate(0)">
+          <rect
+            width="270"
+            height="100"
+            style="stroke: #002868;"
+            fill-opacity="0"
+            x="-6"
+            y="-4"
+          ></rect>
+          <text>
+            <tspan class="anno-text1" x="17" dy="1em">
+              Covid-19 Outpaces Flu
             </tspan>
-            <tspan class="anno-text2" x="0" dy="1em">
-              Influenza Worst Week
+            <tspan class="anno-text2" x="0" dy="1.5em">
+              At no point since Covid-19 deaths
             </tspan>
-          </text>
-        </g>
-        <g transform="translate(780,-50) rotate(10)">
-          <marker
-            id="arrowhead"
-            markerWidth="10"
-            markerHeight="7"
-            refX="0"
-            refY="3.5"
-            orient="auto"
-            class="anno-marker"
-          >
-            <polygon points="0 0, 10 3.5, 0 7" />
-          </marker>
-          <line
-            x1="90"
-            y1="90"
-            x2="150"
-            y2="150"
-            class="anno-line"
-            marker-end="url(#arrowhead)"
-          ></line>
-          <text x="60" y="60" transform="rotate(-10)">
-            <tspan class="anno-text1" x="0" dy="1em">
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;333 Deaths
+            <tspan class="anno-text2" x="30" dy="1.5em">
+              began in AZ did Influenza
             </tspan>
-            <tspan class="anno-text2" x="0" dy="1em">
-              Covid-19 Worst Week
+            <tspan class="anno-text2" x="45" dy="1.5em">
+              result in more deaths.
             </tspan>
           </text>
         </g>
@@ -93,11 +59,11 @@
           .domain(weeksInYear)
           .padding(0.2);
 
-        const yScale = d3.scaleLinear().range([height, 0]).domain([0, 450]);
+        const yScale = d3.scaleLinear().range([height, 0]).domain([0, 750]);
         const invert_yScale = d3
           .scaleLinear()
           .range([height, 0])
-          .domain([450, 0]);
+          .domain([750, 0]);
 
         const svg = d3.select("svg");
 
@@ -114,18 +80,12 @@
 
         var colorScale = d3
           .scaleOrdinal()
-          .domain([
-            "influenza_and_pneumonia_j09_j18",
-            "covid_19_u071_underlying_cause_of_death",
-          ])
+          .domain(["influenza_and_pneumonia_j09_j18", "cov_total"])
           .range(["#bf0a30", "#fed700"]);
 
         var stackLayout = d3
           .stack()
-          .keys([
-            "influenza_and_pneumonia_j09_j18",
-            "covid_19_u071_underlying_cause_of_death",
-          ]);
+          .keys(["influenza_and_pneumonia_j09_j18", "cov_total"]);
 
         var bar = chart
           .selectAll()
@@ -139,7 +99,7 @@
               .data(d)
               .enter()
               .append("rect")
-              .attr("x", (p, i) => xScale(i + 1))
+              .attr("x", (p, i) => xScale(i + 13))
               // .attr("log", function (d, i) {
               //   console.log(i);
               // })
@@ -169,7 +129,7 @@
 
       async function init() {
         let data = await d3.csv(
-          "https://jtayl7.github.io/Weekly_Deaths_AZ_2020.csv"
+          "https://jtayl7.github.io/Weekly_Deaths_AZ_2020_weeks13-28.csv"
         );
 
         barChart(data);
